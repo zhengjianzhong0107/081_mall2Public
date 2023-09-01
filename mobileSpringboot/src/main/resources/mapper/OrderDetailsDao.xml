@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.OrderDetailsDao">
+<select id="selectOne" resultType="com.entity.OrderDetails">
+    select * from order_item where order_id=#{id}
+</select>
+    <delete id="deleteId">
+        delete  from order_item where order_id=#{id}
+    </delete>
+</mapper>

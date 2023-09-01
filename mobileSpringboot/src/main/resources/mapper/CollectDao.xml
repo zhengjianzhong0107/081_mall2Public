@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.CollectDao">
+    <resultMap id="colMap" type="com.entity.Collect">
+        <id column="id" property="id"/>
+        <result column="uid" property="uid"/>
+        <result column="pid" property="pid"/>
+        <association property="user" javaType="com.entity.User">
+            <id column="user_id" property="id"/>
+            <result column="user_name" property="email"/>
+        </association>
+        <association  javaType="com.entity.Product" property="product">
+            <id column="product_id" property="id"/>
+            <result column="product_name" property="proName"/>
+            <result column="product_image" property="image"/>
+            <result column="messages" property="message"/>
+            <result column="product_price" property="price"/>
+        </association>
+    </resultMap>
+<!--    查询-->
+    <select id="selectAll" resultMap="colMap">
+select c.id,c.pid,c.uid,p.product_id,p.product_name,p.product_price,p.messages,p.product_image from collect c left join product p on c.pid = p.product_id left join user u on c.uid = u.user_id
+where c.uid=#{uid}
+ </select>
+    <!--查询是否收藏-->
+    <select id="selIf" resultMap="colMap">
+        select id from collect where uid=#{uid} and pid=#{pid}
+    </select>
+<!-- 取消收藏-->
+    <delete id="deleteOne">
+        delete * from collect where uid=#{uid} and pid=#{pid}
+    </delete>
+
+</mapper>

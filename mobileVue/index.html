@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head id="all">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <title id="t"></title>
+  <meta name="keywords" content="">
+  <meta name="Description" content="">
+
+  <link rel="shortcut icon" href="" type="image/x-icon">
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+<script>
+  $(function () {
+    $.ajax({
+      type: "get",
+      //后端的请求地址
+      url: "http://localhost:8081/sys",
+      dataType: "json",
+      success: function (data) {
+        if (location.href.endsWith("#/")) {
+          $("title").html(data.title);
+        }
+        $("meta[name='keywords']").attr('content', data.keyWord);
+        $("meta[name='Description']").attr('content', data.description);
+        $("link[rel='shortcut icon']").attr('href', data.ico);
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log("请求失败！");
+      }
+    });
+  })
+</script>
+
+</html>

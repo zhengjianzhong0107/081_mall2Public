@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.ProductDao">
+    <resultMap id="proMap" type="com.entity.Product">
+        <id column="product_id" property="id"/>
+        <result column="cid" property="cid"/>
+        <result column="product_name" property="proName"/>
+        <result column="product_price" property="price"/>
+        <result column="product_image" property="image"/>
+        <result column="salenum" property="saleNum"/>
+        <result property="message" column="messages"/>
+        <result column="inventory" property="inventory"/>
+        <result column="state" property="state"/>
+        <result column="rate" property="rate"/>
+        <result column="groundingDate" property="groundingDate"/>
+        <result column="color" property="color"/>
+        <result column="ram" property="ram"/>
+        <association property="category" javaType="com.entity.Category">
+        <id column="cate_id" property="id"/>
+        <result column="cate_name" property="name"/>
+        </association>
+    </resultMap>
+    <select id="selectAll" resultMap="proMap">
+        select p.*,c.* from product p left join category c on p.cid = c.cate_id
+<where>
+    <if test="cid!=0">
+        and p.cid=#{cid}
+    </if>
+    <if test="name!=null and name!=''">
+        and p.product_name like concat('%',#{name},'%')
+    </if>
+    <if test="min!=0 and min &lt;=max">
+        and p.product_price &gt;=#{min}
+    </if>
+    <if test="max!= 0 and max &gt;= min">
+        and p.product_price &lt;=#{max}
+    </if>
+</where> order by p.product_id desc
+    </select>
+<!--    前台分类展示商品-->
+    <select id="selectCate" resultMap="proMap">
+        select p.* from product p
+        where
+            p.state=1
+            <if test="cid!=0">
+                and p.cid=#{cid}
+            </if>
+order by p.product_id desc
+    </select>
+<!--    最新商品-->
+    <select id="selectLimit" resultMap="proMap">
+        select p.* from product p where p.state=1 order by p.groundingDate desc limit
+            <if test="count!=0">
+                 #{count}
+            </if>
+    </select>
+<!--    热卖商品-->
+    <select id="selectPop" resultMap="proMap">
+        select p.* from product p where p.state=1 order by p.salenum desc limit
+        <if test="count!=0">
+            #{count}
+        </if>
+    </select>
+<!--    商品的上下架-->
+    <update id="updateState">
+        update product set state=#{state} where product_id=#{id}
+    </update>
+<!--    添加商品-->
+    <insert id="insertOne">
+        insert into product values(null,#{cid},#{price},#{proName},now(),#{inventory},#{saleNum},#{message},#{color},#{ram},#{image},#{state},5)
+    </insert>
+<!--    更新商品-->
+    <update id="update">
+       update product set cid=#{cid},product_name=#{proName},product_image=#{image},product_price=#{price},salenum=#{saleNum},messages=#{message},inventory=#{inventory},groundingDate=now(),ram=#{ram},color=#{color},state=#{state} where product_id=#{id}
+    </update>
+    <update id="updateC">
+        update product set salenum=#{saleNum},inventory=#{inventory} where product_id=#{id}
+    </update>
+    <update id="updateR">
+        update product set rate=#{rate} where product_id=#{id}
+    </update>
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(*) as num from product
+    </select>
+</mapper>

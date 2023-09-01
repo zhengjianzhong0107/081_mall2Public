@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.OrderDao">
+    <resultMap id="orderMap" type="com.entity.Order">
+        <id column="id" property="id"/>
+        <result column="good_price" property="goodPrice"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="order_state" property="orderState"/>
+        <collection property="orderDetails" ofType="com.entity.OrderDetails">
+            <id column="oid" property="id"/>
+            <result column="count" property="count"/>
+            <association property="product" javaType="com.entity.Product">
+                <id column="product_id" property="id"/>
+                <result column="product_name" property="proName"/>
+                <result column="product_price" property="price"/>
+                <result column="product_image" property="image"/>
+            </association>
+        </collection>
+    </resultMap>
+    <!--    后台订单管理展示-->
+    <resultMap id="orMap" type="com.entity.Order">
+        <id column="id" property="id"/>
+        <result column="good_price" property="goodPrice"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="order_state" property="orderState"/>
+        <association property="user" javaType="com.entity.User">
+            <id column="user_id" property="id"/>
+            <result column="user_name" property="email"/>
+            <result column="nickName" property="nickName"/>
+        </association>
+        <association property="address" javaType="com.entity.Address">
+            <id column="address_id" property="id"/>
+            <result column="receive_name" property="name"/>
+            <result column="address" property="address"/>
+            <result column="mobile" property="mobile"/>
+        </association>
+    </resultMap>
+    <!--    后台订单展示-->
+    <select id="selectHtOrder" resultMap="orMap">
+        select
+        dor.id,dor.good_price,dor.order_time,dor.order_state,u.user_id,u.user_name,da.address,da.address_id,da.receive_name,da.mobile
+        from d_order dor left join d_address da on dor.addr_id = da.address_id left join user u on dor.user_id =
+        u.user_id
+        <where>
+        <if test="userName!=null and userName!=''">
+            and u.user_name like concat('%',#{userName},'%')
+        </if>
+        <if test="id!=0">
+            and dor.id=#{id}
+        </if>
+            <if test="state!=-1">
+                and dor.order_state=#{state}
+            </if>
+        </where> order by dor.id desc
+    </select>
+<!--    用户查看退款-->
+    <select id="selectUserOrder" resultMap="orMap">
+        select
+        dor.id,dor.good_price,dor.order_time,dor.order_state,u.user_id,u.user_name,da.address,da.address_id,da.receive_name,da.mobile
+        from d_order dor left join d_address da on dor.addr_id = da.address_id left join user u on dor.user_id =
+        u.user_id
+        <where>
+
+             u.user_name= #{userName}
+
+            <if test="id!=0">
+                and dor.id=#{id}
+            </if>
+            <if test="state!=-1">
+                and dor.order_state=#{state}
+            </if>
+            <if test="state ==-1">
+                and dor.order_state in (3,-2,-3,-4)
+            </if>
+        </where> order by dor.id desc
+    </select>
+    <!--    后台展示订单详情-->
+    <select id="selectByOid" resultMap="orderMap">
+        select o.id,
+               o.order_time,
+               o.good_price,
+               o.order_state,
+               oi.id oid,
+               oi.count,
+               p.product_id,
+               p.product_price,
+               p.product_name,
+               p.product_image
+        from d_order o
+                 left join order_item oi
+                           on o.id = oi.order_id
+                 left join product p
+                           on oi.product_id = p.product_id
+        where o.id = #{id}
+    </select>
+    <select id="selectByOid1" resultMap="orMap">
+        select dor.id,
+               dor.good_price,
+               dor.order_time,
+               dor.order_state,
+               u.user_id,
+               u.user_name,
+               u.nickName,
+               da.mobile,
+               da.address,
+               da.address_id,
+               da.receive_name
+        from d_order dor
+                 left join d_address da on dor.addr_id = da.address_id
+                 left join user u on dor.user_id = u.user_id
+        where dor.id = #{id}
+    </select>
+    <!--    用户中心订单展示-->
+    <select id="selectOrder" resultMap="orderMap">
+        select o.id,
+               o.order_time,
+               o.good_price,
+               o.order_state,
+               oi.id oid,
+               oi.count,
+               p.product_id,
+               p.product_price,
+               p.product_name,
+               p.product_image
+        from d_order o
+                 left join order_item oi
+                           on o.id = oi.order_id
+                 left join product p
+                           on oi.product_id = p.product_id
+        where o.user_id = #{userId}  order by o.order_time desc
+    </select>
+    <insert id="insert">
+<!--        <selectKey order="AFTER" keyProperty="id" resultType="long">-->
+<!--            select last_insert_id()-->
+<!--        </selectKey>-->
+        insert into d_order values(#{id},#{goodPrice},now(),#{orderState},#{addrId},#{userId})
+    </insert>
+    <update id="updateState">
+        update d_order
+        set order_state=#{orderState}
+        where id = #{id}
+    </update>
+    <!--    //订单数量-->
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(d.id) as num from d_order d
+        <where>
+            <if test="id!=0">
+                and d.order_state=#{id}
+            </if>
+        </where>
+    </select>
+    <delete id="del">
+        delete  from d_order where id=#{id}
+    </delete>
+<!--    评论判断-->
+    <select id="selectIfCom" resultMap="orderMap">
+        select o.id,
+               o.order_state,
+               p.product_id,
+               p.product_name
+        from d_order o
+                 left join order_item oi
+                           on o.id = oi.order_id
+                 left join product p
+                           on oi.product_id = p.product_id
+        where o.user_id = #{id} and o.order_state=3 and p.product_id=#{pid}
+    </select>
+</mapper>

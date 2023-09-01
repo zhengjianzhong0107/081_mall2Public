@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.CartDao">
+    <resultMap id="cartMap" type="com.entity.Cart">
+        <id column="id" property="id"/>
+        <result column="uid" property="uid"/>
+        <result column="pid" property="pid"/>
+        <result column="count" property="count"/>
+        <result column="totalPrice" property="totalPrice"/>
+        <association property="product" javaType="com.entity.Product">
+            <id column="product_id" property="id"/>
+            <result column="product_name" property="proName"/>
+            <result column="product_price" property="price"/>
+            <result column="product_image" property="image"/>
+        </association>
+    </resultMap>
+    <select id="selectByUserId" resultMap="cartMap">
+        select cart.*,p.* from cart left join product p on cart.pid = p.product_id where uid=#{uid}
+    </select>
+    <select id="selectByPid" resultMap="cartMap">
+        select * from cart left join product p on cart.pid = p.product_id where pid=#{pid}
+    </select>
+<!--    更改商品数量以及小计-->
+    <update id="updateByCountId">
+        update cart set count=#{count},totalPrice=#{totalPrice} where id=#{id}
+    </update>
+<!--    清空购物车-->
+    <delete id="deleteByUid">
+        delete from cart where uid=#{uid}
+    </delete>
+</mapper>

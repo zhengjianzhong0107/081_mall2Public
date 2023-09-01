@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.AddressDao">
+    <resultMap id="AdMap" type="com.entity.Address">
+        <id column="address_id" property="id"/>
+        <result column="receive_name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="mobile" property="mobile"/>
+        <result column="uid" property="uid"/>
+        <result column="delete_state" property="del"/>
+        <result column="selected_state" property="sid"/>
+        <association property="user" javaType="com.entity.User">
+            <id column="user_id" property="id"/>
+        </association>
+    </resultMap>
+    <select id="selectAll" resultMap="AdMap">
+        select d.* from d_address d left join user u on d.uid = u.user_id where d.uid=#{uid}  and delete_state=0 order by delete_state desc
+    </select>
+<!--设置默认和删除-->
+    <update id="updateByIds">
+        update d_address set delete_state=#{del},selected_state=#{sid} where address_id=#{id}
+    </update>
+    <insert id="insertOne">
+        insert into d_address values (null,#{name},#{address},#{mobile},#{uid},0,0)
+    </insert>
+<!--    修改地址-->
+<!--    查询当前地址-->
+    <select id="selectById" resultMap="AdMap">
+        select d.* from d_address d where address_id=#{id}
+    </select>
+    <update id="update">
+        update d_address set receive_name=#{name},address=#{address},mobile=#{mobile} where address_id=#{id}
+    </update>
+</mapper>

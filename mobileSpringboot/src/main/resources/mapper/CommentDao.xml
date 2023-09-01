@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.CommentDao">
+    <resultMap id="comMap" type="com.entity.Comment">
+        <id column="com_id" property="id"/>
+        <result column="com_rate" property="rate"/>
+        <result column="pid" property="pid"/>
+        <result column="uid" property="uid"/>
+        <result column="com_content" property="content"/>
+        <result column="dateComment" property="dateComment"/>
+        <association property="user" javaType="com.entity.User">
+            <id column="user_id" property="id"/>
+            <result column="user_name" property="email"/>
+            <result column="nickName" property="nickName"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+        <association property="product" javaType="com.entity.Product">
+            <id column="product_id" property="id"/>
+            <result column="product_name" property="proName"/>
+        </association>
+    </resultMap>
+<!--    添加评论-->
+    <insert id="insertOne">
+        insert into comment
+        values (null,#{rate}, #{content}, now(), #{uid},#{pid})
+    </insert>
+<!--    后台评论查询-->
+    <select id="selectAll" resultMap="comMap">
+        select c.*,p.product_name,u.nickName from comment c left join product p on c.pid = p.product_id left join user u on c.uid = u.user_id
+<where>
+    <if test="comment!=null and comment!=''">
+        and c.com_content like concat('%',#{comment},'%')
+    </if>
+</where>
+order by c.com_id desc
+    </select>
+<!--    用户中心查看评价-->
+    <select id="selectYh" resultMap="comMap">
+        select c.*,p.product_name,p.product_id,u.nickName from comment c left join product p on c.pid = p.product_id left join user u on c.uid = u.user_id
+        <where>
+        and u.user_id=#{id}
+            <if test="comment!=null and comment!=''">
+                and c.com_content like concat('%',#{comment},'%')
+            </if>
+        </where>
+        order by c.com_id desc
+    </select>
+<!--    商品评论查询-->
+    <select id="selectPid" resultMap="comMap">
+        select * from comment left join product p on comment.pid = p.product_id left join user u on comment.uid = u.user_id where  p.product_id=#{pid}
+    </select>
+<!--    统计数量-->
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(c.uid) as num from comment c
+    </select>
+</mapper>

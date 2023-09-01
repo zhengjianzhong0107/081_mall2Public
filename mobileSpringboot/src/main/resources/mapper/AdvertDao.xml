@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.AdvertDao">
+<!--    查询-->
+    <select id="selectGg" resultType="com.entity.Advert">
+        select * from advert
+#         轮播查询
+        <if test="tj=='lb'">
+            where img!='' and title='' limit 4
+        </if>
+
+#         查询通知
+        <if test="tj=='tz'">
+            limit 5,4
+        </if>
+
+    </select>
+<!--    查询轮播-->
+    <select id="selectOne" resultType="com.entity.Advert">
+        select * from advert where id=#{id}
+    </select>
+
+</mapper>
