@@ -6,7 +6,7 @@
 ### 👉选题+开题报告+任务书+程序定制+安装调试+ppt 都可以做
 ---
 
-**毕业设计所有选题地址 [https://github.com/zhengjianzhong0107/allProject](https://github.com/zhengjianzhong0107/allProject)****完整代码收费  可以加qq 931708230 或者加微信ynwwxid 咨询**
+**毕业设计所有选题地址 [https://github.com/zhengjianzhong0107/allProject](https://github.com/zhengjianzhong0107/allProject)****完整代码收费  可以加qq 1556708905 或者加微信zheng0123Long 咨询**
 
 **接毕业设计和论文**
 
