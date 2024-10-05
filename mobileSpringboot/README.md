@@ -9,7 +9,7 @@
 [https://www.bilibili.com/video/BV1pX4y1i7Ne/](https://www.bilibili.com/video/BV1pX4y1i7Ne/)**
 
 **毕业设计所有选题地址：
-[https://github.com/ynwynw/allProject](https://github.com/ynwynw/allProject)**
+[https://github.com/zhengjianzhong0107/allProject](https://github.com/zhengjianzhong0107/allProject)**
 
 ## 基于Springboot+Vue的手机商城(源代码+数据库)081
 
